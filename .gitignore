@@ -1,0 +1,19 @@
+node_modules/
+dist/
+coverage/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Local tooling and OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+
+# TypeScript build cache
+*.tsbuildinfo
