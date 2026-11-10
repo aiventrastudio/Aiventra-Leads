@@ -1,7 +1,6 @@
 node_modules/
 dist/
 coverage/
-.vercel/
 
 # Local environment variables and secrets
 .env
@@ -21,3 +20,5 @@ npm-debug.log*
 
 # TypeScript build cache
 *.tsbuildinfo
+
+.vercel

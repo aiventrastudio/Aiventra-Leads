@@ -1,7 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/smartleads", "destination": "/" },
-    { "source": "/smartleads/:path*", "destination": "/:path*" }
+    { "source": "/smartleads/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/smartleads", "destination": "/index.html" },
+    { "source": "/smartleads/", "destination": "/index.html" },
+    { "source": "/smartleads/:path*", "destination": "/index.html" }
   ]
 }
