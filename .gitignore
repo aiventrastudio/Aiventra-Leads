@@ -1,6 +1,7 @@
 node_modules/
 dist/
 coverage/
+.vercel/
 
 # Local environment variables and secrets
 .env
@@ -12,6 +13,9 @@ coverage/
 Thumbs.db
 .vscode/
 .idea/
+.codex/
+/New folder (4)/
+/landing-preview.png
 *.log
 npm-debug.log*
 

@@ -1,5 +1,5 @@
 {
-  "name": "orbit-outsourcing-dashboard",
+  "name": "aiventra-smart-outsourcing",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -9,10 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "canvas-confetti": "^1.9.4",
+    "lucide-react": "^1.70.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
