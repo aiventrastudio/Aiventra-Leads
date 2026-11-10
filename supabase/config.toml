@@ -1,0 +1,13 @@
+project_id = "gmwymcfehvuublxmjfwj"
+
+[functions.gmass-send]
+verify_jwt = true
+
+[functions.gmass-status]
+verify_jwt = true
+
+[functions.gmass-webhook]
+verify_jwt = false
+
+[functions.x-search]
+verify_jwt = true

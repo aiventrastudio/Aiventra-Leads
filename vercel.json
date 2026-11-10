@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/", "destination": "/smartleads/", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/smartleads/assets/:path*", "destination": "/assets/:path*" },
     { "source": "/smartleads", "destination": "/index.html" },
