@@ -11,6 +11,11 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:transparent}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.shell:before{animation:none}}
 .platform-dot svg path[fill="currentColor"],.platform-mark svg path[fill="currentColor"]{fill:currentColor;stroke:none}
 
+/* Show the workspace brand mark directly, without the colored app-icon tile. */
+.shell .brand-symbol{width:42px;height:42px;display:flex;flex:0 0 42px;align-items:center;justify-content:center;border-radius:0;background:transparent;box-shadow:none;color:inherit;font:inherit;letter-spacing:normal}
+.shell .brand-symbol>svg{width:38px;height:38px;filter:none}
+@media(max-width:600px){.shell .brand-symbol{width:32px;height:32px;flex-basis:32px}.shell .brand-symbol>svg{width:30px;height:30px}}
+
 /* Authenticated workspace follows the selected landing-page palette. */
 .shell.theme-nebula{color:#f7f2ff;background:radial-gradient(ellipse at 76% 0%,rgba(100,35,149,.3),transparent 34%),radial-gradient(ellipse at 18% 72%,rgba(103,22,76,.22),transparent 38%),linear-gradient(135deg,#0c0717 0%,#130a22 52%,#1b0c2c 100%);--line:rgba(216,180,254,.14);--panel:#170f27;--shadow:0 14px 38px rgba(0,0,0,.22)}
 .shell.theme-nebula .sidebar{background:rgba(15,9,25,.9);border-color:rgba(216,180,254,.14);color:#f7f2ff}
@@ -378,3 +383,37 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:transparent}
   .gmass-draft-row .recipient-info { flex-basis: calc(100% - 58px); }
   .gmass-draft-row > .button { margin-left: auto; }
 }
+
+/* Make the authenticated account and sign-out action clear in the workspace sidebar. */
+.shell .user-box>button{width:auto;height:34px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 9px;border:1px solid rgba(216,180,254,.2);border-radius:8px;background:rgba(255,255,255,.07);color:inherit;font-size:10px;font-weight:600;white-space:nowrap}
+.shell .user-box>button:hover{background:rgba(255,255,255,.13)}
+.shell .user-box>button svg{width:14px;height:14px;flex:none}
+@media(max-width:600px){.shell .sidebar-bottom{display:block;margin-top:6px}.shell .bot-status{display:none}.shell .user-box{margin-top:0;padding:6px 2px 0;border-top:0}.shell .user-box>button{height:30px}}
+
+/* Keep the workspace logo inside its sidebar and restore the live theme control. */
+.shell .brand{min-width:0;gap:8px;padding-right:2px}
+.shell .brand-copy{min-width:0}
+.shell .brand b{font-size:12.5px;line-height:1.18;letter-spacing:-.35px;white-space:normal}
+.shell .brand small{font-size:7px;line-height:1.2;letter-spacing:.2px;white-space:normal}
+.workspace-style-picker{position:relative;z-index:8}
+.workspace-style-trigger{min-height:34px;display:flex;align-items:center;gap:7px;padding:0 10px;border:1px solid rgba(216,180,254,.2);border-radius:9px;background:rgba(255,255,255,.055);color:inherit;font-size:11px;white-space:nowrap}
+.workspace-style-trigger>svg:first-child{width:15px;height:15px;color:#c8a9f2}
+.workspace-style-trigger>svg:last-child{width:13px;height:13px;opacity:.7}
+.workspace-style-trigger b{font-weight:600}
+.workspace-style-trigger:hover{background:rgba(255,255,255,.1)}
+.workspace-style-menu{position:absolute;right:0;top:calc(100% + 7px);z-index:20;width:172px;padding:5px;border:1px solid rgba(216,180,254,.2);border-radius:10px;background:#1c132a;box-shadow:0 12px 28px rgba(0,0,0,.32)}
+.workspace-style-menu button{width:100%;min-height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 9px;border:0;border-radius:7px;background:transparent;color:#eee6fa;text-align:left;font-size:11px}
+.workspace-style-menu button:hover,.workspace-style-menu button[aria-checked="true"]{background:rgba(169,107,230,.17)}
+.workspace-style-menu button svg{width:14px;height:14px;color:#4bd8bd}
+.shell.theme-aura-cyan .workspace-style-trigger>svg:first-child{color:#53bde9}
+.shell.theme-aura-cyan .workspace-style-menu{border-color:#d5eaf5;background:#fff;box-shadow:0 12px 28px rgba(24,74,105,.2)}
+.shell.theme-aura-cyan .workspace-style-menu button{color:#26384b}
+.shell.theme-aura-cyan .workspace-style-menu button:hover,.shell.theme-aura-cyan .workspace-style-menu button[aria-checked="true"]{background:#edf8ff}
+@media(max-width:800px){.crumb{max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.workspace-style-trigger{gap:5px;padding:0 7px;font-size:10px}.workspace-style-trigger b{max-width:80px;overflow:hidden;text-overflow:ellipsis}}
+@media(max-width:600px){.shell .brand b{font-size:12px}.shell .brand small{font-size:6.5px}.workspace-style-trigger{min-height:30px}.workspace-style-trigger>svg:first-child{width:13px;height:13px}.workspace-style-menu{width:155px}}
+
+/* Prevent long account emails from pushing the sign-out control outside the sidebar. */
+.shell .user-box{min-width:0;gap:8px}
+.shell .user-box>div:nth-child(2){min-width:0;flex:1 1 auto;overflow:hidden}
+.shell .user-box small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shell .user-box>button{flex:0 0 auto;gap:5px;padding:0 7px;font-size:9px}

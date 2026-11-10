@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { ArrowRight, Lock, Mail, ShieldCheck, X } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown, Lock, LogOut, Mail, Palette, ShieldCheck, X } from 'lucide-react'
 import LandingPage from './LandingPage'
 import { supabase, supabaseConfigured } from './lib/supabase'
 import { useAiventraWorkspace } from './lib/useAiventraWorkspace'
@@ -84,10 +84,11 @@ function personalizeOpportunityMessage(text: string, item: Opportunity) {
 function timeNow() { return new Intl.DateTimeFormat('en', { hour: '2-digit', minute: '2-digit' }).format(new Date()) }
 function formatDateTime(value: string) { return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(value)) }
 function App() {
-  let dashboardTheme = 'theme-nebula'
-  try {
-    if (localStorage.getItem('aiventra:saas-style') === 'aura-cyan') dashboardTheme = 'theme-aura-cyan'
-  } catch {}
+  const [dashboardTheme, setDashboardTheme] = useState<'theme-nebula' | 'theme-aura-cyan'>(() => {
+    try { return localStorage.getItem('aiventra:saas-style') === 'aura-cyan' ? 'theme-aura-cyan' : 'theme-nebula' }
+    catch { return 'theme-nebula' }
+  })
+  const [styleMenuOpen, setStyleMenuOpen] = useState(false)
   const workspace = useAiventraWorkspace()
   const { session, authReady, workspaceId, workspaceLoading, error: workspaceError, signIn, signUp, signOut } = workspace
   const user = session?.user
@@ -565,13 +566,13 @@ function App() {
 
   return <div className={`shell ${dashboardTheme}`}>
     <aside className="sidebar">
-      <a className="brand" href="#overview" onClick={(event) => { event.preventDefault(); setView('Overview') }}><AiventraLogo iconOnly className="brand-symbol"/><span><b>Aiventra Smart Outsourcing</b><small>OUTSOURCING MANAGEMENT SYSTEM</small></span></a>
+      <a className="brand" href="#overview" onClick={(event) => { event.preventDefault(); setView('Overview') }}><AiventraLogo iconOnly className="brand-symbol"/><span className="brand-copy"><b>Aiventra Smart Outsourcing</b><small>OUTSOURCING MANAGEMENT SYSTEM</small></span></a>
       <div className="workspace-label">WORKSPACE</div>
       <nav className="navigation">{nav.map((item) => <button key={item.view} className={view === item.view ? 'nav-item active' : 'nav-item'} onClick={() => setView(item.view)}><span className="nav-icon"><Icon name={item.icon}/></span>{item.view}{item.view === 'Opportunities' && uniqueOpportunities.length > 0 && <span className="nav-count">{uniqueOpportunities.length}</span>}</button>)}</nav>
-      <div className="sidebar-bottom"><div className="bot-status"><Icon name="shield"/><div><b>Bot is in preview mode</b><small>Sources and Make.com not connected</small></div></div><div className="user-box"><div className="user-avatar">{(user?.email || 'A').slice(0, 1).toUpperCase()}</div><div><b>{user?.user_metadata?.full_name || user?.email || 'Workspace member'}</b><small>Signed in</small></div><button aria-label="Sign out" title="Sign out" onClick={() => void signOut().catch((error: Error) => notify(error.message))}><Icon name="more"/></button></div></div>
+      <div className="sidebar-bottom"><div className="user-box"><div className="user-avatar">{(user?.email || 'A').slice(0, 1).toUpperCase()}</div><div><b>{user?.user_metadata?.full_name || 'Workspace member'}</b><small>{user?.email || 'Authenticated account'}</small></div><button aria-label="Sign out" title="Sign out" onClick={() => void signOut().catch((error: Error) => notify(error.message))}><LogOut aria-hidden="true"/><span>Sign out</span></button></div></div>
     </aside>
     <main className="main-area">
-      <header className="topbar"><div className="crumb">Aiventra Smart Outsourcing <span>/</span> <b>{view}</b></div><div className="top-actions"><span className="preview-label">SUPABASE DATA</span><button className="help-button" onClick={() => notify('Records are stored in your authenticated Supabase workspace. Source and delivery integrations remain in preview mode.')}><Icon name="help"/> Help</button></div></header>
+      <header className="topbar"><div className="crumb">Aiventra Smart Outsourcing <span>/</span> <b>{view}</b></div><div className="top-actions"><div className="workspace-style-picker"><button type="button" className="workspace-style-trigger" aria-haspopup="menu" aria-expanded={styleMenuOpen} onClick={() => setStyleMenuOpen((open) => !open)}><Palette aria-hidden="true"/><span>Style</span><b>{dashboardTheme === 'theme-nebula' ? 'Sunset Nebula' : 'Aura Cyan'}</b><ChevronDown aria-hidden="true"/></button>{styleMenuOpen && <div className="workspace-style-menu" role="menu" aria-label="Choose workspace color style">{([{ id: 'theme-nebula', label: 'Sunset Nebula' }, { id: 'theme-aura-cyan', label: 'Aura Cyan' }] as const).map((option) => <button type="button" role="menuitemradio" aria-checked={dashboardTheme === option.id} key={option.id} onClick={() => { setDashboardTheme(option.id); try { localStorage.setItem('aiventra:saas-style', option.id === 'theme-nebula' ? 'sunset-nebula' : 'aura-cyan') } catch {} setStyleMenuOpen(false) }}><span>{option.label}</span>{dashboardTheme === option.id && <Check aria-hidden="true"/>}</button>)}</div>}</div><button className="help-button" onClick={() => notify('Records are stored in your authenticated Supabase workspace. Source and delivery integrations remain in preview mode.')}><Icon name="help"/> Help</button></div></header>
       <section className="page-heading"><div><div className="eyebrow">OUTSOURCING MANAGEMENT SYSTEM</div><h1>{view === 'Overview' ? 'Opportunity operations' : view}</h1><p>{description(view)}</p></div>{view === 'Overview' && <button className="button primary" onClick={() => setShowLeadForm(true)}><span>＋</span> Add opportunity</button>}</section>
 
       {view === 'Overview' && <Overview opportunities={uniqueOpportunities} activity={activity} onGo={setView} onActivitySelect={openActivity} onRun={() => { log('Workflow preview started', 'Demo only · no source scanned and no message sent', 'system'); notify('Preview event logged. No external action taken.') }} />}
