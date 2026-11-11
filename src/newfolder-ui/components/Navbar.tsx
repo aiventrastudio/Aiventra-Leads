@@ -274,7 +274,7 @@ export const Navbar: React.FC = () => {
           {/* Exact "Sign in" Pill Button */}
           <button
             onClick={() => setIsAuthModalOpen(true)}
-            className="px-4 sm:px-5 py-1.5 sm:py-2 text-xs font-semibold rounded-full transition-all duration-200 select-none cursor-pointer bg-[#081432] text-white hover:bg-slate-800 shadow-sm dark:bg-white dark:text-slate-900"
+            className="landing-signin-button px-4 sm:px-5 py-1.5 sm:py-2 text-xs font-semibold rounded-full transition-all duration-200 select-none cursor-pointer bg-[#081432] text-white hover:bg-slate-800 shadow-sm dark:bg-white dark:text-slate-900"
           >
             Sign in
           </button>

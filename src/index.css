@@ -417,3 +417,36 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:transparent}
 .shell .user-box>div:nth-child(2){min-width:0;flex:1 1 auto;overflow:hidden}
 .shell .user-box small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .shell .user-box>button{flex:0 0 auto;gap:5px;padding:0 7px;font-size:9px}
+
+/* Mobile workspace navigation: compact brand/account row above a thumb-scrollable nav. */
+@media(max-width:600px){
+  .shell .sidebar{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand account" "navigation navigation";align-items:center;gap:6px 8px;height:auto;padding:8px 12px 7px}
+  .shell .brand{grid-area:brand;min-width:0;padding:0;gap:7px}
+  .shell .brand-symbol{width:30px;height:30px;flex-basis:30px}
+  .shell .brand-symbol>svg{width:28px;height:28px}
+  .shell .brand-copy{min-width:0}
+  .shell .brand b{font-size:11px;line-height:1.1}
+  .shell .brand small{font-size:6px;letter-spacing:.15px}
+  .shell .workspace-label{display:none}
+  .shell .sidebar-bottom{grid-area:account;display:contents;margin:0}
+  .shell .bot-status{display:none}
+  .shell .user-box{grid-area:account;display:flex;gap:7px;margin:0;padding:0;border:0}
+  .shell .user-box>div:nth-child(2){display:none}
+  .shell .user-avatar{width:29px;height:29px;border-radius:9px}
+  .shell .user-box>button{height:30px;padding:0 8px}
+  .shell .navigation{grid-area:navigation;display:flex;width:100%;gap:5px;overflow-x:auto;overflow-y:hidden;padding:2px 0 3px;scrollbar-width:none;overscroll-behavior-x:contain;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .shell .navigation::-webkit-scrollbar{display:none}
+  .shell .nav-item{height:40px;flex:0 0 auto;gap:7px;padding:0 11px;border:1px solid transparent;border-radius:9px;font-size:11px;scroll-snap-align:start}
+  .shell .nav-item.active{border-color:rgba(212,178,245,.18)}
+}
+
+/* Keep the landing-page Sign in label on one line on narrow screens only. */
+@media(max-width:767px){.landing-signin-button{flex:0 0 auto;min-width:max-content;white-space:nowrap}}
+
+/* Restore the Aiventra vector logo as a free-standing mark, without a tile. */
+.shell .brand{gap:8px}
+@media(max-width:600px){.shell .brand{gap:7px}}
+
+/* Match the reference mark's wide silhouette without adding a logo tile. */
+.shell .brand-symbol>svg{width:42px;height:23px}
+@media(max-width:600px){.shell .brand-symbol>svg{width:30px;height:17px}}

@@ -9,11 +9,11 @@ interface AiventraLogoProps {
 export const AiventraLogo: React.FC<AiventraLogoProps> = ({ className = '', iconOnly = false, light = false }) => {
   return (
     <div className={`inline-flex items-center gap-2.5 select-none ${className}`}>
-      {/* Original ribbon mark inspired by the brand's flowing silhouette. */}
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 drop-shadow-xs transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
-        <path d="M3.5 25.5C8.8 15.8 10.4 7 16.4 6.2c4.8-.6 7.3 5.1 10.1 15.1" stroke="#54DDF5" strokeWidth="5.2" strokeLinecap="round" />
-        <path d="M7.1 25.4c3.5-3.5 6.5-7.1 10-7.1 3.1 0 4.6 3.3 7.8 3.3 1.7 0 2.7-.8 3.6-1.8" stroke="#2478F2" strokeWidth="5.2" strokeLinecap="round" />
-        <circle cx="28" cy="9" r="3" fill="#54DDF5" />
+      {/* Clean vector redraw of the supplied cyan arch and blue wave mark. */}
+      <svg viewBox="0 0 106 56" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-7 transition-transform duration-200 group-hover:scale-105" aria-hidden="true">
+        <path d="M15 55C26 35 38 8 52 5C63 3 69 15 75 29L67 35C62 22 58 14 53 14C46 14 36 41 28 55H15Z" fill="#55DDF1" />
+        <path d="M57 10C66 14 70 32 76 45C81 54 89 50 94 39L102 44C96 57 86 61 77 55C67 48 63 28 57 17C55 13 53 11 51 11Z" fill="#1267E8" />
+        <circle cx="95" cy="29" r="8" fill="#55DDF1" />
       </svg>
 
       {!iconOnly && (

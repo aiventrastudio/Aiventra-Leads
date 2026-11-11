@@ -35,3 +35,8 @@
 .auth-page.theme-nebula .auth-card{border-color:rgba(216,180,254,.18);background:rgba(23,15,39,.94);box-shadow:0 24px 70px rgba(0,0,0,.35)}
 .auth-page.theme-nebula .auth-card h1{color:#f8f4ff}
 .auth-page.theme-nebula .auth-copy{color:#b5a8c4}
+
+
+/* Keep the standalone auth-screen mark free of a background tile. */
+.auth-page .auth-logo{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:0;background:transparent;box-shadow:none;color:inherit;font:inherit}
+.auth-page .auth-logo>svg{width:42px;height:23px;filter:none}
