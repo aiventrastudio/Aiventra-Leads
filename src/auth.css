@@ -39,4 +39,4 @@
 
 /* Keep the standalone auth-screen mark free of a background tile. */
 .auth-page .auth-logo{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:0;background:transparent;box-shadow:none;color:inherit;font:inherit}
-.auth-page .auth-logo>svg{width:42px;height:23px;filter:none}
+.auth-page .auth-logo>img{width:42px;height:27px;object-fit:contain}

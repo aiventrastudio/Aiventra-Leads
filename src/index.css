@@ -448,5 +448,6 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:transparent}
 @media(max-width:600px){.shell .brand{gap:7px}}
 
 /* Match the reference mark's wide silhouette without adding a logo tile. */
-.shell .brand-symbol>svg{width:42px;height:23px}
-@media(max-width:600px){.shell .brand-symbol>svg{width:30px;height:17px}}
+/* Use the supplied transparent logo asset without a tile or drawn substitute. */
+.shell .brand-symbol>img{width:42px;height:27px;object-fit:contain}
+@media(max-width:600px){.shell .brand-symbol>img{width:30px;height:19px}}
