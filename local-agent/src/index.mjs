@@ -19,6 +19,7 @@ let activeSessionId = null
 let activeContext = null
 let activeBrowser = null
 let pollTimer = null
+let lastQueueHeartbeatAt = 0
 
 function json(response, status, body, origin = '*') {
   response.writeHead(status, {
@@ -107,6 +108,7 @@ const server = createServer(async (request, response) => {
       pollTimer = setInterval(() => void pollQueue(), 3000)
       pollTimer.unref?.()
       console.log(`Paired with Aiventra workspace ${workspaceId}. Session refresh token is memory-only.`)
+      void pollQueue()
       return json(response, 200, { ok: true, paired: true }, origin)
     } catch (error) {
       return json(response, 400, { error: error instanceof Error ? error.message : 'Pairing failed.' }, origin)
@@ -605,13 +607,18 @@ async function pollQueue() {
       .eq('workspace_id', workspaceId).eq('status', 'queued').order('created_at', { ascending: true }).limit(1)
     if (error) throw error
     if (data?.[0]) {
+      console.log(`Queue poll found queued session ${data[0].id} for workspace ${workspaceId}.`)
       const { data: claimed, error: claimError } = await client.from('agent_sessions').update({ status: 'running', started_at: new Date().toISOString() })
         .eq('id', data[0].id).eq('workspace_id', workspaceId).eq('status', 'queued').select('*').maybeSingle()
       if (claimError) throw claimError
       if (claimed) {
+        console.log(`Claimed research session ${claimed.id}; starting browser.`)
         activeSessionId = claimed.id
         await runSession(claimed)
-      }
+      } else console.warn(`Queued session ${data[0].id} was visible but could not be claimed. It may have changed status during polling.`)
+    } else if (Date.now() - lastQueueHeartbeatAt >= 30_000) {
+      lastQueueHeartbeatAt = Date.now()
+      console.log(`Queue poll found no queued sessions for workspace ${workspaceId}.`)
     }
   } catch (error) {
     console.error(`Queue polling failed: ${error instanceof Error ? error.message : 'unknown error'}`)
