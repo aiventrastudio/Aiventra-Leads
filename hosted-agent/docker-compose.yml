@@ -1,0 +1,34 @@
+services:
+  agent:
+    build:
+      context: ..
+      dockerfile: hosted-agent/Dockerfile
+    restart: unless-stopped
+    init: true
+    security_opt:
+      - seccomp=./seccomp_profile.json
+    expose:
+      - "8080"
+    environment:
+      AIVENTRA_CLOUD_MODE: "true"
+      AIVENTRA_AGENT_PORT: "3210"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - agent
+    environment:
+      AIVENTRA_AGENT_DOMAIN: ${AIVENTRA_AGENT_DOMAIN:?Set a DNS name for the hosted agent}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

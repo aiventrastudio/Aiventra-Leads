@@ -1,0 +1,8 @@
+{
+  "comment": "Playwright Chromium sandbox permissions for the supervised hosted browser.",
+  "names": ["clone", "setns", "unshare"],
+  "action": "SCMP_ACT_ALLOW",
+  "args": [],
+  "includes": {},
+  "excludes": {}
+}

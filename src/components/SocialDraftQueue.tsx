@@ -8,6 +8,7 @@ type SocialDraft = {
   recipient_name: string
   recipient_handle: string
   body: string
+  source_url?: string
   status: string
   created_at: string
 }
@@ -34,7 +35,14 @@ export function SocialDraftQueue({ workspaceId, refreshKey, focusOpportunityId, 
       .in('status', ['pending_review', 'approved', 'draft', 'failed'])
       .order('created_at', { ascending: false }).limit(100)
     if (error) notifyRef.current(`Social drafts could not be loaded: ${error.message}`)
-    else setDrafts((data || []) as SocialDraft[])
+    else {
+      const drafts = (data || []) as SocialDraft[]
+      const ids = drafts.map((draft) => draft.opportunity_id).filter((id): id is string => Boolean(id))
+      const opportunities = ids.length ? await supabase.from('opportunities').select('id, source_url').eq('workspace_id', workspaceId).in('id', ids) : { data: [], error: null }
+      if (opportunities.error) notifyRef.current(`Source links could not be loaded: ${opportunities.error.message}`)
+      const sourceById = new Map((opportunities.data || []).map((item) => [item.id, item.source_url || '']))
+      setDrafts(drafts.map((draft) => ({ ...draft, source_url: draft.opportunity_id ? sourceById.get(draft.opportunity_id) : '' })))
+    }
     setLoading(false)
   }, [workspaceId])
 
@@ -75,6 +83,7 @@ export function SocialDraftQueue({ workspaceId, refreshKey, focusOpportunityId, 
       {drafts.map((draft) => <article data-opportunity-id={draft.opportunity_id || undefined} className={`recipient-row social-draft-row ${focusOpportunityId === draft.opportunity_id ? 'activity-target' : ''}`} key={draft.id}>
         <span className="recipient-avatar"><MessageCircle size={16}/></span>
         <div className="recipient-info"><b>{draft.recipient_name || 'Contact'}{draft.recipient_handle ? ` · ${draft.recipient_handle}` : ''}</b><small>{draft.status === 'draft' ? 'Draft' : 'Ready for review'} · {new Date(draft.created_at).toLocaleString()}</small><small className="gmass-message-preview">{draft.body}</small></div>
+        {draft.source_url && <a className="button secondary small" href={draft.source_url} target="_blank" rel="noreferrer">Open post</a>}
         <button className="button secondary small" disabled={Boolean(busyId)} onClick={() => void copyDraft(draft)}><Copy size={14}/> Copy</button>
         <button className="button secondary small draft-delete" disabled={Boolean(busyId)} onClick={() => void deleteDraft(draft)}>{busyId === draft.id ? 'Deleting…' : <><Trash2 size={14}/>Delete</>}</button>
       </article>)}
