@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.56.1-noble
+FROM mcr.microsoft.com/playwright:v1.65.0-noble
 
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
