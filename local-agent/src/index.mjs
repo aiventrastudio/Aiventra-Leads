@@ -71,8 +71,10 @@ const server = createServer(async (request, response) => {
       return json(response, 500, { error: error instanceof Error ? error.message : 'Could not prepare the browser viewer.' }, origin)
     }
   }
-  if (request.method === 'GET' && request.url?.startsWith('/authorize-view?')) {
-    const token = new URL(request.url, 'http://127.0.0.1').searchParams.get('token') || ''
+  if (request.method === 'GET' && request.url?.startsWith('/authorize-view')) {
+    const originalUri = request.headers['x-original-uri']
+    const tokenSource = typeof originalUri === 'string' ? originalUri : request.url
+    const token = new URL(tokenSource, 'http://127.0.0.1').searchParams.get('token') || ''
     const [payload, signature] = token.split('.')
     if (!payload || !signature) return json(response, 401, { error: 'Viewer token is missing.' }, origin)
     const expected = createHmac('sha256', viewerSecret).update(payload).digest()
