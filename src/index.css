@@ -457,3 +457,28 @@ html{scroll-behavior:smooth;scroll-padding-top:24px}body{background:transparent}
 @media(max-width:600px){.research-body{padding:0 13px 15px}.research-fields{grid-template-columns:1fr 1fr}.pair-agent{grid-template-columns:1fr}.pair-agent>small{grid-column:auto}.session-metrics{padding-left:13px;padding-right:13px}.live-session-overview,.session-actions{padding-left:13px;padding-right:13px}.agent-event-list{margin-left:13px;margin-right:13px}.agent-event-list article{grid-template-columns:68px 1fr}.agent-event-list time{grid-column:2}.session-live>.inline-warning{margin-left:13px;margin-right:13px}.agent-platform-list{padding-left:13px;padding-right:13px}}
 .research-rules-section,.research-rule-grid{padding:0}.research-score-settings{margin:0}
 .research-advanced{border:1px solid #e9eaf0;border-radius:9px;padding:10px 12px}.research-advanced summary{color:#6f7484;font-size:11px;font-weight:700;cursor:pointer}.research-advanced-body{display:grid;gap:13px;padding-top:13px}.research-contact-note{margin:0;color:#9298a7;font-size:10px;line-height:1.5}.shell.theme-nebula .research-advanced{border-color:rgba(216,180,254,.16)}.shell.theme-nebula .research-advanced summary{color:#d9cbed}.shell.theme-nebula .research-contact-note{color:#b7a9ca}
+
+/* Research sessions: lead with the agent connection and give the live data a calmer hierarchy. */
+.agent-status-card{grid-column:1/-1;padding:19px 22px;background:linear-gradient(115deg,#fff 0%,#faf8ff 58%,#f5f2ff 100%);border-color:#e6e0f5;box-shadow:0 12px 30px rgba(49,35,85,.07)}
+.agent-status-main{display:flex;align-items:center;gap:14px;min-width:0}
+.agent-status-icon{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid #e4ddfa;border-radius:14px;background:#f1edff;color:#6c55d5}
+.agent-status-copy{min-width:0;flex:1}
+.agent-status-kicker{display:block;margin-bottom:3px;color:#8170c4;font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+.agent-status-copy h2{margin:0;color:#242236;font:750 16px Manrope;letter-spacing:-.3px}
+.agent-status-copy p{margin:5px 0 0;color:#7f8494;font-size:11px;line-height:1.5}
+.agent-status-pair{margin-top:16px;border-style:solid;border-color:#e9e4f4;background:rgba(255,255,255,.72)}
+.connection-status.connected::before{content:'✓';display:inline-grid;place-items:center;width:14px;height:14px;margin-right:5px;border-radius:50%;background:#18a575;color:#fff;font-size:9px;font-weight:900;line-height:1}
+.session-metrics>div{min-height:70px;padding:12px;border-color:#e7e7ef;border-radius:12px;background:linear-gradient(145deg,#fff,#faf9fd);box-shadow:0 3px 10px rgba(31,32,52,.035);transition:transform .16s,border-color .16s,box-shadow .16s}
+.session-metrics>div:hover{transform:translateY(-2px);border-color:#d8d0ef;box-shadow:0 8px 18px rgba(49,35,85,.08)}
+.session-live .agent-event-list article{padding:12px 8px;border-radius:8px;transition:background .15s}
+.session-live .agent-event-list article:hover{background:#faf9fd}
+.shell.theme-nebula .agent-status-card{background:linear-gradient(115deg,rgba(30,20,47,.98),rgba(39,25,60,.98));border-color:rgba(216,180,254,.2);box-shadow:0 14px 32px rgba(0,0,0,.2)}
+.shell.theme-nebula .agent-status-icon{background:rgba(144,109,217,.16);border-color:rgba(190,154,255,.22);color:#d8c5ff}
+.shell.theme-nebula .agent-status-kicker{color:#c4b0ff}
+.shell.theme-nebula .agent-status-copy h2{color:#f8f4ff}
+.shell.theme-nebula .agent-status-copy p{color:#b7a9ca}
+.shell.theme-nebula .agent-status-pair{background:rgba(255,255,255,.035);border-color:rgba(216,180,254,.16)}
+.shell.theme-nebula .session-metrics>div{background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.025));border-color:rgba(216,180,254,.16);box-shadow:none}
+.shell.theme-nebula .session-metrics>div:hover{border-color:rgba(190,154,255,.38);box-shadow:0 8px 18px rgba(0,0,0,.16)}
+.shell.theme-nebula .session-live .agent-event-list article:hover{background:rgba(255,255,255,.035)}
+@media(max-width:600px){.agent-status-card{padding:15px}.agent-status-main{align-items:flex-start;flex-wrap:wrap}.agent-status-icon{width:39px;height:39px}.agent-status-copy{width:calc(100% - 53px);flex:none}.agent-status-main>.connection-status{margin-left:53px}.agent-status-pair{margin-top:13px}}
