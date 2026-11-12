@@ -13,8 +13,9 @@ type EventRow = { id: string; event_at: string; type: string; message: string }
 const platforms: Platform[] = ['Reddit', 'X', 'Facebook', 'LinkedIn', 'Instagram', 'TikTok', 'YouTube']
 const serviceOptions = ['Website development', 'App development', 'CRM', 'Automation', 'Design', 'Other']
 const hostedAgentUrl = import.meta.env.VITE_RESEARCH_AGENT_URL?.trim()
-const researchAgentBase = (hostedAgentUrl || 'http://127.0.0.1:3210').replace(/\/$/, '')
 const hostedAgent = Boolean(hostedAgentUrl)
+const agentConfigured = hostedAgent || import.meta.env.DEV
+const researchAgentBase = (hostedAgentUrl || (import.meta.env.DEV ? 'http://127.0.0.1:3210' : '')).replace(/\/$/, '')
 const time = (value: string) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value))
 
 export function ResearchSessions({ workspaceId, userId, searchRules, onNotify }: {
@@ -40,6 +41,7 @@ export function ResearchSessions({ workspaceId, userId, searchRules, onNotify }:
   const queryList = useMemo(() => searchRules.query.split(/[\n,]/).map((item) => item.trim()).filter(Boolean), [searchRules.query])
 
   const checkAgent = useCallback(async () => {
+    if (!agentConfigured) { setAgentState('offline'); return }
     try {
       const response = await fetch(`${researchAgentBase}/health`, { cache: 'no-store', signal: AbortSignal.timeout(5000) })
       const result = await response.json()
@@ -78,11 +80,11 @@ export function ResearchSessions({ workspaceId, userId, searchRules, onNotify }:
   }, [selected?.id, onNotify])
 
   async function pairAgent() {
-    if (!pairCode.trim()) { onNotify(`Enter the one-time pairing code ${hostedAgent ? 'shown in the hosted worker logs' : 'shown in the local agent terminal'}.`); return }
+    if (!pairCode.trim()) { onNotify('Enter the one-time connection code provided by your workspace administrator.'); return }
     setBusy(true)
     try {
       const { data: { session }, error } = await supabase.auth.getSession()
-      if (error || !session) throw new Error('Sign in to Aiventra before pairing the local companion.')
+      if (error || !session) throw new Error('Sign in to Aiventra before connecting the research agent.')
       const response = await fetch(`${researchAgentBase}/pair`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${pairCode.trim()}` },
         body: JSON.stringify({
@@ -93,14 +95,14 @@ export function ResearchSessions({ workspaceId, userId, searchRules, onNotify }:
       })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Pairing failed.')
-      setPairCode(''); setAgentState('connected'); onNotify(`${hostedAgent ? 'Hosted' : 'Local'} research agent paired. Its refresh token stays in process memory.`)
+      setPairCode(''); setAgentState('connected'); onNotify('Research agent connected to this workspace.')
     } catch (cause) {
-      onNotify(cause instanceof Error ? cause.message : 'Could not pair the local companion.')
+      onNotify(cause instanceof Error ? cause.message : 'Could not connect the research agent.')
     } finally { setBusy(false) }
   }
 
   async function startSession() {
-    if (agentState !== 'connected') { onNotify(`Start and pair the ${hostedAgent ? 'hosted research worker' : 'local research companion'} first.`); return }
+    if (agentState !== 'connected') { onNotify('The research agent is not connected. Contact your workspace administrator.'); return }
     if (!queryList.length) { onNotify('Enter at least one search query.'); return }
     setBusy(true)
     const rulesSaved = await searchRules.save()
@@ -113,7 +115,7 @@ export function ResearchSessions({ workspaceId, userId, searchRules, onNotify }:
     if (error) onNotify(`Research session could not be queued: ${error.message}`)
     else {
       setSessions((current) => [data as SessionRow, ...current]); setSelectedId(data.id)
-      onNotify(`Queued ${platform} research. The ${hostedAgent ? 'hosted' : 'local'} visible browser will open shortly.`)
+      onNotify(`Queued ${platform} research. The supervised browser will open shortly.`)
       void supabase.from('activity_events').insert({ workspace_id: workspaceId, title: 'Browser research queued', detail: `${platform} · ${queryList.length} query(s) · unlimited posts and duration`, kind: 'setup', created_by: userId })
     }
     setBusy(false)
@@ -164,12 +166,12 @@ export function ResearchSessions({ workspaceId, userId, searchRules, onNotify }:
         <span className="agent-status-icon"><Bot size={21}/></span>
         <div className="agent-status-copy">
           <span className="agent-status-kicker">Research agent</span>
-          <h2>{hostedAgent ? 'Hosted browser agent' : 'Local companion'}</h2>
-          <p>{agentState === 'connected' ? 'Connected and ready for supervised research in this workspace.' : agentState === 'unpaired' ? 'The worker is online. Pair it with this workspace to get started.' : agentState === 'offline' ? `The ${hostedAgent ? 'hosted worker' : 'local companion'} is not reachable right now.` : 'Checking agent availability…'}</p>
+          <h2>{hostedAgent ? 'Hosted research agent' : 'Research agent'}</h2>
+          <p>{agentState === 'connected' ? 'Connected and ready for supervised research in this workspace.' : agentState === 'unpaired' ? 'The agent is online and needs to be connected to this workspace.' : agentState === 'offline' ? !agentConfigured ? 'Research is not configured for this site. Contact your workspace administrator.' : 'The research agent is not reachable right now. Try again shortly or contact your workspace administrator.' : 'Checking agent availability…'}</p>
         </div>
         <span className={`connection-status ${agentState === 'connected' ? 'connected' : agentState === 'checking' ? 'checking' : 'needs_setup'}`}>{agentState === 'connected' ? 'Connected' : agentState === 'checking' ? 'Checking' : 'Not connected'}</span>
       </div>
-      {agentState !== 'connected' && <div className="pair-agent agent-status-pair"><label className="field-label">One-time pairing code<input value={pairCode} onChange={(event) => setPairCode(event.target.value)} placeholder={hostedAgent ? 'Paste the code from the hosted worker logs' : 'Paste the code printed by npm start'} autoComplete="off"/></label><button className="button secondary" disabled={busy || agentState === 'offline'} onClick={() => void pairAgent()}>Pair {hostedAgent ? 'hosted agent' : 'local companion'}</button><small>{hostedAgent ? 'Sign in to social platforms in the supervised browser when a session starts.' : <>Run the setup steps in <b>local-agent/README.md</b>. The browser password is never shared with Aiventra.</>}</small></div>}
+      {agentState === 'unpaired' && <div className="pair-agent agent-status-pair"><label className="field-label">One-time connection code<input value={pairCode} onChange={(event) => setPairCode(event.target.value)} placeholder="Enter the code provided by your workspace administrator" autoComplete="off"/></label><button className="button secondary" disabled={busy} onClick={() => void pairAgent()}>Connect agent</button><small>Once connected, sign in to the social platform in the supervised browser when a session starts.</small></div>}
     </section>
     <section className="content-card research-config">
       <div className="card-heading"><div><h2>Research setup</h2><p>Set what to find and choose a platform. Starting a session saves the latest rules.</p></div></div>
@@ -183,7 +185,7 @@ export function ResearchSessions({ workspaceId, userId, searchRules, onNotify }:
       </div>
     </section>
     <section className="content-card session-live">
-      <div className="card-heading"><div><h2>Live session</h2><p>Updates automatically from the {hostedAgent ? 'hosted browser worker' : 'local companion'}</p></div></div>
+      <div className="card-heading"><div><h2>Live session</h2><p>Research activity and controls</p></div></div>
       {selected ? <>
         <div className="live-session-overview"><div><b>{selected.platform} research</b><small>{selected.queries.join(' · ')}</small></div><span className={`connection-status ${selected.status === 'running' ? 'connected' : selected.status === 'needs_user' ? 'error' : selected.status === 'queued' ? 'checking' : 'idle'}`}>{selected.control_mode === 'user' && selected.status === 'paused' ? 'Take over' : selected.status.replace('_', ' ')}</span></div>
         <div className="session-metrics"><div><small>Posts seen</small><b>{selected.posts_seen}</b></div><div><small>Opportunities</small><b>{selected.opportunities_added}</b></div><div><small>Signed in</small><b>{selected.sign_in_confirmed ? 'Confirmed' : 'Not yet'}</b></div></div>
@@ -196,7 +198,7 @@ export function ResearchSessions({ workspaceId, userId, searchRules, onNotify }:
         {selected.status === 'needs_user' && <div className="inline-warning">The agent has stopped interacting with the site. Resolve the issue in the visible browser, then choose Resume agent.</div>}
         {selected.status === 'paused' && selected.control_mode === 'user' && <div className="inline-warning">Take over is active. The agent will not touch the page until you resume it.</div>}
         <div className="agent-event-list">{events.length ? events.map((event) => <article key={event.id}><span className={`event-type event-${event.type}`}>{event.type.replace('_', ' ')}</span><span>{event.message}</span><time>{time(event.event_at)}</time></article>) : <div className="empty-state"><Activity size={20}/><h3>No session events yet</h3><p>Start a session to see browser activity here.</p></div>}</div>
-      </> : <div className="empty-state"><Bot size={22}/><h3>No research sessions</h3><p>Pair the local companion and start your first supervised session.</p></div>}
+      </> : <div className="empty-state"><Bot size={22}/><h3>No research sessions</h3><p>Start a supervised session to see browser activity here.</p></div>}
       {sessions.length > 1 && <label className="field-label session-history">Recent sessions<select value={selected?.id || ''} onChange={(event) => setSelectedId(event.target.value)}>{sessions.map((item) => <option key={item.id} value={item.id}>{item.platform} · {item.status} · {time(item.created_at)}</option>)}</select></label>}
     </section>
   </div>
@@ -218,7 +220,7 @@ export function AgentConnectionCards({ workspaceId, onRefresh }: { workspaceId: 
     void refresh(); const timer = window.setInterval(() => void refresh(), 8000)
     return () => { active = false; window.clearInterval(timer) }
   }, [workspaceId, onRefresh])
-  return <section className="content-card agent-connection-card"><div className="card-heading"><div><h2>{hostedAgent ? 'Hosted browser research' : 'Local browser research'}</h2><p>Platform sign-in is checked in the {hostedAgent ? 'supervised remote' : 'local visible'} browser during a session.</p></div><span className={`connection-status ${paired ? 'connected' : 'needs_setup'}`}>{paired ? 'Agent connected' : 'Agent not connected'}</span></div><div className="agent-platform-list">{platforms.map((platform) => {
+  return <section className="content-card agent-connection-card"><div className="card-heading"><div><h2>Research agent</h2><p>Platform sign-in is confirmed in the supervised browser during a session.</p></div><span className={`connection-status ${paired ? 'connected' : 'needs_setup'}`}>{paired ? 'Agent connected' : 'Agent not connected'}</span></div><div className="agent-platform-list">{platforms.map((platform) => {
     const last = lastSessions.find((item) => item.platform === platform)
     return <div className="agent-platform-row" key={platform}><span className="platform-mark">{platform[0]}</span><div><b>{platform}</b><small>{last?.sign_in_confirmed ? `Signed in · last confirmed ${last.started_at ? time(last.started_at) : 'during session'}` : 'Sign-in not confirmed yet'}{last ? ` · Last session ${last.status}` : ' · No session yet'}</small></div><span className={`connection-status ${last?.sign_in_confirmed ? 'connected' : 'idle'}`}>{last?.sign_in_confirmed ? 'Signed in' : 'Not checked'}</span></div>
   })}</div></section>
