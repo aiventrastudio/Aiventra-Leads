@@ -65,6 +65,8 @@ Deno.serve(async (request) => {
     const qualified = analyzed.filter((post) => post.relevant && post.match_score >= session.minimum_score)
     return json({ analyzed: analyzed.length, qualified })
   } catch (cause) {
-    return json({ error: cause instanceof Error ? cause.message : 'Post analysis failed.' }, 502)
+    const message = cause instanceof Error ? cause.message : 'Post analysis failed.'
+    console.error(`Gemini post analysis failed: ${message.slice(0, 1000)}`)
+    return json({ error: message }, 502)
   }
 })

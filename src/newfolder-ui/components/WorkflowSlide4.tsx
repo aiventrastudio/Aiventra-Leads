@@ -60,13 +60,13 @@ export const WorkflowSlide4: React.FC = () => {
       </div>
 
       {/* Five independent step markers with breathing room above. */}
-      <div className="relative mt-2 w-full max-w-4xl mx-auto mb-12 px-2 shrink-0">
+      <div className="relative mt-2 w-full max-w-6xl mx-auto mb-12 px-3 sm:px-5 shrink-0">
         <div className="absolute left-[10%] right-[10%] top-6 sm:top-8 z-0 h-px" style={{ backgroundColor: isDark ? 'rgba(216, 180, 254, 0.24)' : 'rgba(0, 85, 255, 0.18)' }} aria-hidden="true">
           <span className="block h-full transition-[width] duration-500 ease-out" style={{ width: `${((selectedStep - 1) / (WORKFLOW_STEPS.length - 1)) * 100}%`, backgroundColor: style.accentColor, boxShadow: `0 0 10px ${style.accentGlow}` }} />
         </div>
 
         {/* 5 Step Nodes */}
-        <div className="grid grid-cols-5 gap-2 relative z-10">
+        <div className="grid grid-cols-5 gap-3 sm:gap-6 relative z-10">
           {WORKFLOW_STEPS.map((step) => {
             const isSelected = selectedStep === step.step;
             return (
@@ -99,7 +99,7 @@ export const WorkflowSlide4: React.FC = () => {
 
                 {/* Step Title matching screenshot */}
                 <span
-                  className={`text-[10px] sm:text-xs font-semibold tracking-tight transition-colors line-clamp-1 ${
+                  className={`text-[10px] sm:text-sm font-semibold tracking-tight transition-colors ${
                     isSelected
                       ? isDark
                         ? 'text-pink-400 font-bold'
